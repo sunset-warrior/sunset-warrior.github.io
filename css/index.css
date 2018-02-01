@@ -1,8 +1,8 @@
 body {
-	background-image: url(../img/body.jpg)
+	background-image: url(../img/bodyimg/body.jpg)
 }
 
-#main {
+.main {
 	width: 44%;
 	height: 44%;
 	background-color: rgba(0, 0, 0, 0.3);
@@ -13,13 +13,31 @@ body {
 	text-align: center;
 }
 
-#main span {
+.main span {
 	position: absolute;
 	right: 20px;
 	top: 3px;
 	color: wheat;
+	cursor: pointer;
 }
-
+#container1{
+	animation:mainani 1s;
+	-webkit-animation:mainani 1s;
+	animation-fill-mode:forwards;
+	-webkit-animation-fill-mode: forwards;
+}
+#container2{
+	animation:mainani2 1s;
+	-webkit-animation:mainani2 1s;
+	animation-fill-mode:forwards;
+	-webkit-animation-fill-mode: forwards;
+}
+.container{
+	height: 100%;
+	width: 100%;
+	margin: 0;
+	padding: 0;
+}
 .title {
 	font-size: 23px;
 	/*color: wheat;*/
