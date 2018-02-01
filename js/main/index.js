@@ -17,7 +17,7 @@ $(function(){
 	$('.list a').mouseout(function(){
 		$(this).css('text-decoration','none');
 	})
-	$('.close').click(function(){ 
+	$('.close').click(function(){
 //		if(typeof($('.main').attr('id'))=='undefined'){
 //			$('.main').attr('id','container2');
 //		}
