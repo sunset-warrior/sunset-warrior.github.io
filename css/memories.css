@@ -12,9 +12,9 @@
 }
 
 .bgcolor {
-	  background: #ee9ca7;
-    background: -webkit-linear-gradient(top left, #ee9ca7 0%, #ee9ca7 100%);
-    background: linear-gradient(to bottom right, #ee9ca7 0%, #ee9ca7 100%);
+	  background: #000;
+    background: -webkit-linear-gradient(top left, #000 0%, #000 100%);
+    background: linear-gradient(to bottom right, #000 0%, #000 100%);
     opacity: 0.9;
 }
 
@@ -2096,12 +2096,12 @@
 	text-align: center;
 	left: 15%;
 }
-.bg {
+/* .bg {
 	background: url('../img/4.png');
 	height:100%;
 	text-align: center;
 	line-height: 600px;
-}
+} */
 .bg-blur {
 	float: left;
 	width: 100%;
