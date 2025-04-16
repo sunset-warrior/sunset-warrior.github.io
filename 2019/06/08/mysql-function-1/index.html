@@ -1,0 +1,361 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+
+<head>
+    <!--Setting-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta name="apple-mobile-web-app-capable" content="Evan的微博">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,adress=no">
+    <meta name="browsermode" content="application">
+    <meta name="screen-orientation" content="portrait">
+    <meta name="theme-version" content="1.3.0">
+    <meta name="root" content="/">
+    <link rel="dns-prefetch" href="https://llblog.cn">
+    <!--SEO-->
+
+<meta name="keywords" content="mysql,数据库" />
+
+
+<meta name="description" content="Mysql的函数的创建一、什么是mysql的自定义函数？官方解释：A user-defined function (UDF) is a way to extend MySQL with a ne..." />
+
+
+<meta name="robots" content="all" />
+<meta name="google" content="all" />
+<meta name="googlebot" content="all" />
+<meta name="verify" content="all" />
+    <!--Title-->
+
+<title>
+    
+    Mysql的函数的创建 |
+    
+    Evan的微博
+</title>
+
+<link rel="alternate" href="/atom.xml" title="Evan的微博" type="application/atom+xml">
+
+
+<link rel="icon" href="/favicon.ico">
+
+    
+
+
+<link rel="stylesheet" href="/css/bootstrap.min.css?rev=3.3.7.css">
+<link rel="stylesheet" href="/css/font-awesome.min.css?rev=4.7.0.css">
+<link rel="stylesheet" href="/css/style.css?rev=@@hash.css">
+
+    
+<div class="hide">
+    <script type="text/javascript">
+    var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+    document.write(unescape("%3Cspan class='cnzz_stat_icon_1263868967 hide' %3E%3Cscript%20src%3D%22https%3A%2F%2Fs95.cnzz.com%2Fz_stat.php%3Fweb_id%3D1272564536%22%3E%3C%2Fscript%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s19.cnzz.com/z_stat.php%3Fid%3D1263868967%26show%3Dpic1' type='text/javascript'%3E%3C/script%3E"));
+    </script>
+</div>
+
+
+
+
+    
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<!--[if lte IE 8]>
+<style>
+    html{ font-size: 1em }
+</style>
+<![endif]-->
+<!--[if lte IE 9]>
+<div style="ie">你使用的浏览器版本过低，为了你更好的阅读体验，请更新浏览器的版本或者使用其他现代浏览器，比如Chrome、Firefox、Safari等。</div>
+<![endif]-->
+<body>
+    <header class="main-header"  style="background-image:url(
+    https://hexo-theme-snippet-1251680922.cos.ap-beijing.myqcloud.com/img/banner.jpg)"
+     >
+    <div class="main-header-box">
+        <a class="header-avatar" href="/" title='Evan'>
+            <img src="/img/avatar.jpg" alt="logo头像" class="img-responsive center-block">
+        </a>
+        <div class="branding">
+            <!--<h2 class="text-hide">Snippet主题,从未如此简单有趣</h2>-->
+            
+            <img src="/img/branding.png" alt="Snippet 博客主题" class="img-responsive center-block">
+            
+        </div>
+    </div>
+</header>
+    <nav class="main-navigation">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="navbar-header"><span class="nav-toggle-button collapsed pull-right" data-toggle="collapse" data-target="#main-menu" id="mnav">
+                        <span class="sr-only"></span>
+                        <i class="fa fa-bars"></i>
+                    </span>
+                    <a class="navbar-brand" href="https://llblog.cn">
+                        Evan的微博</a>
+                </div>
+                <div class="collapse navbar-collapse" id="main-menu">
+                    <ul class="menu">
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/"><i class="fa "></i>
+                                首页</a>
+                        </li>
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/categories/前端/"><i class="fa "></i>
+                                前端</a>
+                        </li>
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/categories/后端/"><i class="fa "></i>
+                                后端</a>
+                        </li>
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/categories/工具/"><i class="fa "></i>
+                                工具</a>
+                        </li>
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/categories/杂谈/"><i class="fa "></i>
+                                杂谈</a>
+                        </li>
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/archives/"><i class="fa "></i>
+                                时间轴</a>
+                        </li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+    <section class="content-wrap">
+        <div class="container">
+            <div class="row">
+                <main class="col-md-8 main-content m-post">
+                    <p id="process"></p>
+<article class="post">
+    <div class="post-head">
+        <h1 id="Mysql的函数的创建">
+            
+            Mysql的函数的创建
+            
+        </h1>
+        <div class="post-meta">
+    
+    <span class="categories-meta fa-wrap">
+        <i class="fa fa-folder-open-o"></i>
+        <a class="category-link" href="/categories/%E5%90%8E%E7%AB%AF/">后端</a>
+    </span>
+    
+    
+    <span class="fa-wrap">
+        <i class="fa fa-tags"></i>
+        <span class="tags-meta">
+            
+            <a class="tag-none-link" href="/tags/mysql/" rel="tag">mysql</a> <a class="tag-none-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a>
+            
+        </span>
+    </span>
+    
+    
+    
+    <span class="fa-wrap">
+        <i class="fa fa-clock-o"></i>
+        <span class="date-meta">
+            2019/06/08</span>
+    </span>
+    
+    
+</div>
+        
+        
+        <p class="fa fa-exclamation-triangle warning">
+            本文于<strong>
+                2139</strong>
+            天之前发表，文中内容可能已经过时。
+        </p>
+        
+    </div>
+    
+    <div class="post-body post-content">
+        <h1 id="Mysql的函数的创建"><a href="#Mysql的函数的创建" class="headerlink" title="Mysql的函数的创建"></a>Mysql的函数的创建</h1><h2 id="一、什么是mysql的自定义函数？"><a href="#一、什么是mysql的自定义函数？" class="headerlink" title="一、什么是mysql的自定义函数？"></a>一、什么是mysql的自定义函数？</h2><p>官方解释：A user-defined function (UDF) is a way to extend MySQL with a new function that works like a native (built-in) MySQL function such as ABS() or CONCAT().<br>翻译：用户自定义函数，英文缩写：(UDF)，是一种对于扩展mysql功能的方法，类似于ABS()或者CONCAT()。</p>
+<h2 id="二、为什么要学会mysql的自定义函数的创建？"><a href="#二、为什么要学会mysql的自定义函数的创建？" class="headerlink" title="二、为什么要学会mysql的自定义函数的创建？"></a>二、为什么要学会mysql的自定义函数的创建？</h2><p>因为我们在项目开发的过程中，总是会遇到各种各样的对于不同的业务而需要对数据进行不同展示和处理的情况，而直接查询保存在数据库中的数据，即使使用了数据库内置的函数，依然不能很好的完成这部分功能，在以前，这一部分的工作往往是交给编程语言在开发的过程中完成的，但其实，在某些情况下，我们可以使用mysql的自定义函数来完成我们对于数据的处理，所以从今天起，我们又将学习一门新的技能。  </p>
+<h2 id="三、那么如何学习mysql的自定义函数呢？"><a href="#三、那么如何学习mysql的自定义函数呢？" class="headerlink" title="三、那么如何学习mysql的自定义函数呢？"></a>三、那么如何学习mysql的自定义函数呢？</h2><p>这一部分我们将会分成三部分进行讲解  </p>
+<ol>
+<li>mysql自定义函数的结构  </li>
+<li>对结构的每一部分进行解释  </li>
+<li>学习几个小栗子，进行实战模拟</li>
+</ol>
+<h2 id="四、接下来，开始我们的学习"><a href="#四、接下来，开始我们的学习" class="headerlink" title="四、接下来，开始我们的学习"></a>四、接下来，开始我们的学习</h2><h3 id="1、函数结构"><a href="#1、函数结构" class="headerlink" title="1、函数结构"></a>1、函数结构</h3><p>先看看<a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/8.0/en/create-function-udf.html">mysql官方</a>对于mysql函数创建的描述。<br>在页面的上方你会很方便的看到对于自定义函数结构的展示，就是下面这个样子。</p>
+<pre><code>CREATE [AGGREGATE] FUNCTION function_name
+    RETURNS &#123;STRING|INTEGER|REAL|DECIMAL&#125;
+    SONAME shared_library_name
+</code></pre>
+<p>但是实质上，自定义函数的结构应该是下面这个样子的。</p>
+<pre><code>CREATE [AGGREGATE] FUNCTION function_name(parameter_name type,[parameter_name type,...])
+
+　　RETURNS &#123;STRING|INTEGER|REAL&#125;
+
+　　runtime_body
+</code></pre>
+<p>接下来我们来看一下这个结构中的每项的含义。<br>a. 中括号<code>[</code>和<code>]</code><br>在学习编程开发的过程中，在很多文档里边你会看到这个符号，请记住，这个符号的含义是<br><font color="red">括号包起来的内容在实际使用中是需要根据实际情况选择使用的。</font>换句话说，就是可以使用，也可以不使用，而<code>[</code>和<code>]</code>是不需要写进程序的。谨记！<br>b.  AGGREGATE<br>这个单词在mysql中，往往是在创建聚合函数的过程中使用到，那么什么是聚合函数？<br>在mysql中，类似于sum(),count(),max()<br>等都是聚合函数，这些函数在实际项目开发中的作用很大，建议多储备。关于聚合函数，可以参考博主的另一篇文章<a target="_blank" rel="noopener" href="https://www.llblog.cn/2019/06/08/mysql-aggregate-function-1/">关于mysql聚合函数的学习</a>。<br>c.parameter_name<br>解释：参数名<br>d.type<br>解释：参数类型<br>e.runtime_body<br>解释：运行代码（函数体）</p>
+<h3 id="2、实际上手"><a href="#2、实际上手" class="headerlink" title="2、实际上手"></a>2、实际上手</h3><p><font color="red">注意：所有自定义函数的目的都是为了输出数据，所以每个自定义函数必须规定返回值，函数的参数可有可无，具体按照实际情况而定</font><br>需求：（无参函数）需要输出当前日期的年月数据，格式为”yyyy-MM”，类似”2012-12”  </p>
+<pre><code>CREATE FUNCTION cur_year_month()
+RETURNS VARCHAR(20)
+RETURN (select DATE_FORMAT(now(),&#39;%Y-%m&#39;));
+ 
+ 注：1. 函数无论有无参数函数后面的括号必须存在，
+       2.当return后面是一个查询语句时，必须将查询语句放到括号里边，否则会报错。
+       3.当函数体存在多条语句时，需使用BEGIN 和 END将函数体包含。
+       
+</code></pre>
+<p>附加知识：mysql中format的格式有一下几种：</p>
+<pre><code>format样式整理：
+        年：  %Y  显示四位 ： 2015            %y    只显示后两位  ：15
+        月：  %M 月份的英文显示：October %m  月份的阿拉伯显示：01-12  %b 月份的英文缩略显示：Oct  %c  月份的阿拉伯显示：1-12
+        日：  %d 阿拉伯显示：00-31        %D 带有英文后缀：1st-31th     %e 阿拉伯显示：1-31          %j   年的天：001-366   
+        时：  %H ：00-23           %h:01-12        %I:01-12      %k:0-23      %l:1-12
+        分：   %i：00-59
+        秒：   %S：00-59        %s:00-59
+        微妙： %f
+        AM/PM:%p
+        12小时制时间：%r:   02:02:44 PM
+        24小时制时间： %T：  14:02:44
+         周： %W：周的英文显示      %w 周的阿拉伯显示 ：0（星期日）-6（星期六）  %a   周的英文缩略显示：Mon-
+</code></pre>
+<p>需求：（有参函数）需要输出两个数字的商</p>
+<pre><code>CREATE FUNCTION shang(num1 SMALLINT UNSIGNED,num2 SMALLINT UNSIGNED)
+RETURNS FLOAT(7,2)
+RETURN num1/num2;
+</code></pre>
+<p>  注：SMALLINT 数据类型是一种精确数值数据类型，其精度在算术运算后不变。它需要 2 个字节存储。<br>    有符号的 SMALLINT 值的范围是 –2^15（2^15表示2的15次幂） 到2^15 – 1，即 –32768 到 32767。<br>    无符号的 SMALLINT 值范围是 0 到 2^16 – 1，即 0 到 65535。 INT 是4字节数据，取值范围 -2^31 - 2^31,<br>    所以在考虑最大数据范围的前提下，优先使用smallint类型。</p>
+<p>UNSIGNED 代表无符号。<br>所以我们在调用上面的函数时，最大可传的参数是65535，假如我们去掉了UNSIGNED的限制，最大就只能传<br>–32768 到 32767的数字。<br>因为我们定义FLOAT的限制为(7,2)，表示结果的整数最多为（7-2&#x3D;5）位，而小数位最多为2位，谨记。  </p>
+<h3 id="3、删除函数"><a href="#3、删除函数" class="headerlink" title="3、删除函数"></a>3、删除函数</h3><p> 当我们自定义的函数不再使用的时候，可以使用下面的方式来删除</p>
+<pre><code>DROP FUNCTION FUNCTION_NAME
+</code></pre>
+<p>举例：比如我们要删除我们上面创建的函数就可以执行下面这个语句。</p>
+<pre><code>DROP FUNCTION  shang
+</code></pre>
+<p>上述为mysql具体创建函数的过程，希望可以看到此篇博文的同学对mysql的函数有一个初步的了解，和学会简单的使用。<br>加油！</p>
+
+    </div>
+    
+    <div class="post-footer">
+        <div>
+            
+            转载声明：
+            商业转载请联系作者获得授权,非商业转载请注明出处 © <a href="" target="_blank">Snippet</a>
+            
+            
+        </div>
+        <div>
+            
+        </div>
+    </div>
+</article>
+<div class="article-nav prev-next-wrap clearfix">
+    
+    <a href="/2019/06/08/mysql-aggregate-function-1/" class="pre-post btn btn-default" title='关于mysql聚合函数的学习'>
+        <i class="fa fa-angle-left fa-fw"></i><span class="hidden-lg">上一篇</span>
+        <span class="hidden-xs">
+            关于mysql聚合函数的学习</span>
+    </a>
+    
+    
+    <a href="/2019/06/02/learning-english-1/" class="next-post btn btn-default" title='learning_english'>
+        <span class="hidden-lg">下一篇</span>
+        <span class="hidden-xs">
+            learning_english</span><i class="fa fa-angle-right fa-fw"></i>
+    </a>
+    
+</div>
+
+<div id="comments">
+    
+    
+<div class="utteranc">
+  
+  <script
+    src='https://utteranc.es/client.js'
+    repo='shenliyang/snippet-comment'
+    issue-term='pathname'
+    issue-number=''
+    theme='github-light'
+    label=''
+    crossorigin='anonymous'
+    async
+  ></script>
+</div>
+
+
+
+</div>
+
+                </main>
+                
+                    <aside id="article-toc" role="navigation" class="col-md-4">
+    <div class="widget">
+        <h3 class="title">
+            文章目录
+        </h3>
+        
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Mysql%E7%9A%84%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%9B%E5%BB%BA"><span class="toc-text">Mysql的函数的创建</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E4%BB%80%E4%B9%88%E6%98%AFmysql%E7%9A%84%E8%87%AA%E5%AE%9A%E4%B9%89%E5%87%BD%E6%95%B0%EF%BC%9F"><span class="toc-text">一、什么是mysql的自定义函数？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E5%AD%A6%E4%BC%9Amysql%E7%9A%84%E8%87%AA%E5%AE%9A%E4%B9%89%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%9B%E5%BB%BA%EF%BC%9F"><span class="toc-text">二、为什么要学会mysql的自定义函数的创建？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E9%82%A3%E4%B9%88%E5%A6%82%E4%BD%95%E5%AD%A6%E4%B9%A0mysql%E7%9A%84%E8%87%AA%E5%AE%9A%E4%B9%89%E5%87%BD%E6%95%B0%E5%91%A2%EF%BC%9F"><span class="toc-text">三、那么如何学习mysql的自定义函数呢？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E6%8E%A5%E4%B8%8B%E6%9D%A5%EF%BC%8C%E5%BC%80%E5%A7%8B%E6%88%91%E4%BB%AC%E7%9A%84%E5%AD%A6%E4%B9%A0"><span class="toc-text">四、接下来，开始我们的学习</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81%E5%87%BD%E6%95%B0%E7%BB%93%E6%9E%84"><span class="toc-text">1、函数结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E3%80%81%E5%AE%9E%E9%99%85%E4%B8%8A%E6%89%8B"><span class="toc-text">2、实际上手</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%E3%80%81%E5%88%A0%E9%99%A4%E5%87%BD%E6%95%B0"><span class="toc-text">3、删除函数</span></a></li></ol></li></ol></li></ol>
+        
+    </div>
+</aside>
+                
+            </div>
+        </div>
+    </section>
+    <footer class="main-footer">
+    <div class="container">
+        <div class="row">
+        </div>
+    </div>
+</footer>
+<a id="back-to-top" class="icon-btn hide">
+    <i class="fa fa-chevron-up"></i>
+</a>
+    <div class="copyright">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="busuanzi">
+    
+</div>
+            </div>
+            <div class="col-sm-12">
+                <span>Copyright &copy;
+                    2025
+                    <a href="//beian.miit.gov.cn/" target="_blank" rel="nofollow">
+                        陕ICP备2021013131号-1</a>
+                    
+                </span> |
+                <span>
+                    Powered by <a href="//hexo.io" class="copyright-links" target="_blank" rel="nofollow">Hexo</a>
+                </span> |
+                <span>
+                    Theme by <a href="//github.com/shenliyang/hexo-theme-snippet.git" class="copyright-links" target="_blank" rel="nofollow">Snippet</a>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<script src="/js/app.js?rev=@@hash.js"></script>
+
+</body>
+</html>

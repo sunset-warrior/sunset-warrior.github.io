@@ -1,0 +1,319 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+
+<head>
+    <!--Setting-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta name="apple-mobile-web-app-capable" content="Evan的微博">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,adress=no">
+    <meta name="browsermode" content="application">
+    <meta name="screen-orientation" content="portrait">
+    <meta name="theme-version" content="1.3.0">
+    <meta name="root" content="/">
+    <link rel="dns-prefetch" href="https://llblog.cn">
+    <!--SEO-->
+
+<meta name="keywords" content="事件监听" />
+
+
+<meta name="description" content="近期在项目中遇到需要事件发布和监听的场景：以前存在一段比较复杂的代码流程，比如：创建的数据，在通过审批之后需要同步到其他表里边，现在需要在同步到其他表的同时需要计算某一批数据并推送给另外一个接口..." />
+
+
+<meta name="robots" content="all" />
+<meta name="google" content="all" />
+<meta name="googlebot" content="all" />
+<meta name="verify" content="all" />
+    <!--Title-->
+
+<title>
+    
+    springboot事件发布监听 |
+    
+    Evan的微博
+</title>
+
+<link rel="alternate" href="/atom.xml" title="Evan的微博" type="application/atom+xml">
+
+
+<link rel="icon" href="/favicon.ico">
+
+    
+
+
+<link rel="stylesheet" href="/css/bootstrap.min.css?rev=3.3.7.css">
+<link rel="stylesheet" href="/css/font-awesome.min.css?rev=4.7.0.css">
+<link rel="stylesheet" href="/css/style.css?rev=@@hash.css">
+
+    
+<div class="hide">
+    <script type="text/javascript">
+    var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+    document.write(unescape("%3Cspan class='cnzz_stat_icon_1263868967 hide' %3E%3Cscript%20src%3D%22https%3A%2F%2Fs95.cnzz.com%2Fz_stat.php%3Fweb_id%3D1272564536%22%3E%3C%2Fscript%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s19.cnzz.com/z_stat.php%3Fid%3D1263868967%26show%3Dpic1' type='text/javascript'%3E%3C/script%3E"));
+    </script>
+</div>
+
+
+
+
+    
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<!--[if lte IE 8]>
+<style>
+    html{ font-size: 1em }
+</style>
+<![endif]-->
+<!--[if lte IE 9]>
+<div style="ie">你使用的浏览器版本过低，为了你更好的阅读体验，请更新浏览器的版本或者使用其他现代浏览器，比如Chrome、Firefox、Safari等。</div>
+<![endif]-->
+<body>
+    <header class="main-header"  style="background-image:url(
+    https://hexo-theme-snippet-1251680922.cos.ap-beijing.myqcloud.com/img/banner.jpg)"
+     >
+    <div class="main-header-box">
+        <a class="header-avatar" href="/" title='Evan'>
+            <img src="/img/avatar.jpg" alt="logo头像" class="img-responsive center-block">
+        </a>
+        <div class="branding">
+            <!--<h2 class="text-hide">Snippet主题,从未如此简单有趣</h2>-->
+            
+            <img src="/img/branding.png" alt="Snippet 博客主题" class="img-responsive center-block">
+            
+        </div>
+    </div>
+</header>
+    <nav class="main-navigation">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="navbar-header"><span class="nav-toggle-button collapsed pull-right" data-toggle="collapse" data-target="#main-menu" id="mnav">
+                        <span class="sr-only"></span>
+                        <i class="fa fa-bars"></i>
+                    </span>
+                    <a class="navbar-brand" href="https://llblog.cn">
+                        Evan的微博</a>
+                </div>
+                <div class="collapse navbar-collapse" id="main-menu">
+                    <ul class="menu">
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/"><i class="fa "></i>
+                                首页</a>
+                        </li>
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/categories/前端/"><i class="fa "></i>
+                                前端</a>
+                        </li>
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/categories/后端/"><i class="fa "></i>
+                                后端</a>
+                        </li>
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/categories/工具/"><i class="fa "></i>
+                                工具</a>
+                        </li>
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/categories/杂谈/"><i class="fa "></i>
+                                杂谈</a>
+                        </li>
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/archives/"><i class="fa "></i>
+                                时间轴</a>
+                        </li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+    <section class="content-wrap">
+        <div class="container">
+            <div class="row">
+                <main class="col-md-8 main-content m-post">
+                    <p id="process"></p>
+<article class="post">
+    <div class="post-head">
+        <h1 id="springboot事件发布监听">
+            
+            springboot事件发布监听
+            
+        </h1>
+        <div class="post-meta">
+    
+    <span class="categories-meta fa-wrap">
+        <i class="fa fa-folder-open-o"></i>
+        <a class="category-link" href="/categories/%E5%90%8E%E7%AB%AF/">后端</a>
+    </span>
+    
+    
+    <span class="fa-wrap">
+        <i class="fa fa-tags"></i>
+        <span class="tags-meta">
+            
+            <a class="tag-none-link" href="/tags/%E4%BA%8B%E4%BB%B6%E7%9B%91%E5%90%AC/" rel="tag">事件监听</a>
+            
+        </span>
+    </span>
+    
+    
+    
+    <span class="fa-wrap">
+        <i class="fa fa-clock-o"></i>
+        <span class="date-meta">
+            2019/06/23</span>
+    </span>
+    
+    
+</div>
+        
+        
+        <p class="fa fa-exclamation-triangle warning">
+            本文于<strong>
+                2123</strong>
+            天之前发表，文中内容可能已经过时。
+        </p>
+        
+    </div>
+    
+    <div class="post-body post-content">
+        <p>近期在项目中遇到需要事件发布和监听的场景：<br>以前存在一段比较复杂的代码流程，比如：创建的数据，在通过审批之后需要同步到其他表里边，现在需要在同步到其他表的同时需要计算某一批数据并推送给另外一个接口，那么我们该怎样发布我们的事件，并成功监听到，并且执行相关的逻辑呢？</p>
+<h3 id="1-定义事件"><a href="#1-定义事件" class="headerlink" title="1. 定义事件"></a>1. 定义事件</h3><p>我们定义一个事件，包括两个参数，此事件必须继承ApplicationEvent才可保证在publish时可以正常监听到  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">public class CalCourierAndSalesDeptDistance extends ApplicationEvent &#123;</span><br><span class="line">	/**</span><br><span class="line">	 * Create a new ApplicationEvent.</span><br><span class="line">	 *</span><br><span class="line">	 * @param source the object on which the event initially occurred (never &#123;@code null&#125;)</span><br><span class="line">	 */</span><br><span class="line">	private String type;</span><br><span class="line">	</span><br><span class="line">	private String deptCode;</span><br><span class="line">	</span><br><span class="line">	public CalCourierAndSalesDeptDistance(Object source, String type, String deptCode) &#123;</span><br><span class="line">		super(source);</span><br><span class="line">		this.type = type;</span><br><span class="line">		this.deptCode = deptCode;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	public boolean isNotNull()&#123;</span><br><span class="line">		return StringUtils.isNotEmpty(this.getType()) &amp;&amp; StringUtils.isNotEmpty(this.getDeptCode());</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	public String getType() &#123;</span><br><span class="line">		return type;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	public void setType(String type) &#123;</span><br><span class="line">		this.type = type;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	public String getDeptCode() &#123;</span><br><span class="line">		return deptCode;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	public void setDeptCode(String deptCode) &#123;</span><br><span class="line">		this.deptCode = deptCode;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="2-如何发布事件？"><a href="#2-如何发布事件？" class="headerlink" title="2.如何发布事件？"></a>2.如何发布事件？</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">@Component</span><br><span class="line">public class DistanceCalPublish implements ApplicationEventPublisherAware &#123;</span><br><span class="line"></span><br><span class="line">    private  ApplicationEventPublisher applicationEventPublisher;</span><br><span class="line">    @Override</span><br><span class="line">    public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) &#123;</span><br><span class="line">        this.applicationEventPublisher = applicationEventPublisher;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    // 这个方法用于接收发送给监听的数据，并封装成事件对象，并发送给监听</span><br><span class="line">    public void publish(String type, String deptCode)&#123;</span><br><span class="line">        CalCourierAndSalesDeptDistance calCourierAndSalesDeptDistance = new CalCourierAndSalesDeptDistance(this, type, deptCode);</span><br><span class="line">        this.applicationEventPublisher.publishEvent(calCourierAndSalesDeptDistance);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>本类继承ApplicationEventPublisherAware是用于发布事件使用，通过@Component是为了在SpringBoot启动的时候可以自动扫描到本类使用Bean来管理。<br>代码里边applicationEventPublisher.publishEvent这个方法可以接收一个Object的类型数据（将定义的事件放到此处），所以可以将需要发送给监听事件的数据通过这个参数传输。</p>
+<h3 id="3-如何监听？"><a href="#3-如何监听？" class="headerlink" title="3.如何监听？"></a>3.如何监听？</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">@Component</span><br><span class="line">@EnableAsync(proxyTargetClass=true)</span><br><span class="line">public class CalRegionDistanceHandler &#123;</span><br><span class="line"></span><br><span class="line">    @Async(&quot;RegionDistanceHandlerExecutor&quot;)</span><br><span class="line">    // 这里可以保证监听到创建的事件</span><br><span class="line">	@EventListener(classes = CalCourierAndSalesDeptDistance.class)</span><br><span class="line">	public void handler(CalCourierAndSalesDeptDistance calCourierAndSalesDeptDistance) &#123;</span><br><span class="line">        // 拿到数据，执行接下来的处理</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol>
+<li>@Component：上述代码中的作用和发布时相同。  </li>
+<li>@EnableAsync：打开异步执行，因为我们的事件的执行不需要影响原流程，所以异步即可。  </li>
+<li>方法handler：处理事件的方法，baseId是从发布事件的地方拿到的。  </li>
+<li>@EventListener：可开启对事件的监听。  </li>
+<li>@Async：异步处理的标志，括号中的参数为定义的线程池。</li>
+</ol>
+<h4 id="线程池的定义如下"><a href="#线程池的定义如下" class="headerlink" title="线程池的定义如下"></a>线程池的定义如下</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">@Configuration</span><br><span class="line">public class ConmmonConfig &#123;</span><br><span class="line"></span><br><span class="line">	@Value(&quot;$&#123;common.threadPoolsSize:20&#125;&quot;)</span><br><span class="line">	private int threadPoolsSize;</span><br><span class="line"></span><br><span class="line">	@Bean(&quot;RegionDistanceHandlerExecutor&quot;)</span><br><span class="line">	public ThreadPoolTaskExecutor msgHandlerExecutor()&#123;</span><br><span class="line">		ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();</span><br><span class="line">		taskExecutor.setCorePoolSize(threadPoolsSize);</span><br><span class="line">		taskExecutor.setMaxPoolSize(threadPoolsSize);</span><br><span class="line">		return taskExecutor;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="3-如何使用？"><a href="#3-如何使用？" class="headerlink" title="3.如何使用？"></a>3.如何使用？</h3><ol>
+<li>在使用的类中先注入该publish</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">@Autowired</span><br><span class="line">GridSplitPublish publish;</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>在合适的实际发布事件</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">publish.publish(xxxx);</span><br><span class="line">// 其中xxx为需要发送给事件监听的参数</span><br></pre></td></tr></table></figure>
+<h3 id="4-事件监听到此为止"><a href="#4-事件监听到此为止" class="headerlink" title="4.事件监听到此为止"></a>4.事件监听到此为止</h3><p><img src="/static/image/springboot.jpg" alt="图片"></p>
+
+    </div>
+    
+    <div class="post-footer">
+        <div>
+            
+            转载声明：
+            商业转载请联系作者获得授权,非商业转载请注明出处 © <a href="" target="_blank">Snippet</a>
+            
+            
+        </div>
+        <div>
+            
+        </div>
+    </div>
+</article>
+<div class="article-nav prev-next-wrap clearfix">
+    
+    
+    <a href="/2019/06/23/equals-meaning/" class="next-post btn btn-default" title='== 和 equals 的区别是什么？'>
+        <span class="hidden-lg">下一篇</span>
+        <span class="hidden-xs">
+            == 和 equals 的区别是什么？</span><i class="fa fa-angle-right fa-fw"></i>
+    </a>
+    
+</div>
+
+<div id="comments">
+    
+    
+<div class="utteranc">
+  
+  <script
+    src='https://utteranc.es/client.js'
+    repo='shenliyang/snippet-comment'
+    issue-term='pathname'
+    issue-number=''
+    theme='github-light'
+    label=''
+    crossorigin='anonymous'
+    async
+  ></script>
+</div>
+
+
+
+</div>
+
+                </main>
+                
+                    <aside id="article-toc" role="navigation" class="col-md-4">
+    <div class="widget">
+        <h3 class="title">
+            文章目录
+        </h3>
+        
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%AE%9A%E4%B9%89%E4%BA%8B%E4%BB%B6"><span class="toc-text">1. 定义事件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%A6%82%E4%BD%95%E5%8F%91%E5%B8%83%E4%BA%8B%E4%BB%B6%EF%BC%9F"><span class="toc-text">2.如何发布事件？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E5%A6%82%E4%BD%95%E7%9B%91%E5%90%AC%EF%BC%9F"><span class="toc-text">3.如何监听？</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B%E6%B1%A0%E7%9A%84%E5%AE%9A%E4%B9%89%E5%A6%82%E4%B8%8B"><span class="toc-text">线程池的定义如下</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8%EF%BC%9F"><span class="toc-text">3.如何使用？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E4%BA%8B%E4%BB%B6%E7%9B%91%E5%90%AC%E5%88%B0%E6%AD%A4%E4%B8%BA%E6%AD%A2"><span class="toc-text">4.事件监听到此为止</span></a></li></ol>
+        
+    </div>
+</aside>
+                
+            </div>
+        </div>
+    </section>
+    <footer class="main-footer">
+    <div class="container">
+        <div class="row">
+        </div>
+    </div>
+</footer>
+<a id="back-to-top" class="icon-btn hide">
+    <i class="fa fa-chevron-up"></i>
+</a>
+    <div class="copyright">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="busuanzi">
+    
+</div>
+            </div>
+            <div class="col-sm-12">
+                <span>Copyright &copy;
+                    2025
+                    <a href="//beian.miit.gov.cn/" target="_blank" rel="nofollow">
+                        陕ICP备2021013131号-1</a>
+                    
+                </span> |
+                <span>
+                    Powered by <a href="//hexo.io" class="copyright-links" target="_blank" rel="nofollow">Hexo</a>
+                </span> |
+                <span>
+                    Theme by <a href="//github.com/shenliyang/hexo-theme-snippet.git" class="copyright-links" target="_blank" rel="nofollow">Snippet</a>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<script src="/js/app.js?rev=@@hash.js"></script>
+
+</body>
+</html>
